@@ -46,6 +46,8 @@ jobs:
           restore-keys: |
             gradle-${{ runner.os }}-
 
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
       - name: Build with Gradle (create jar)
         run: ./gradlew clean build --no-daemon
         # Falls du Tests separat laufen lassen möchtest, entferne --no-daemon nicht oder passe the Task an.
