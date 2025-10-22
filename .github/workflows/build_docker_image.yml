@@ -19,7 +19,7 @@ permissions:
 env:
   # Passe den Image-Namen an (Owner / Image). Z. B. ghcr.io/<OWNER>/my-kotlin-app
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/petclinic-kotlin-spring
-  JAVA_VERSION: '23'
+  JAVA_VERSION: '17'
 
 jobs:
   build-and-push:
@@ -32,7 +32,7 @@ jobs:
       - name: Set up JDK ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v4
         with:
-          distribution: corretto
+          distribution: adopt
           java-version: ${{ env.JAVA_VERSION }}
           cache: gradle
 
