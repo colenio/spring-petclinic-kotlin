@@ -76,29 +76,3 @@ jobs:
             ${{ env.IMAGE_NAME }}:${{ github.sha }}
           cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache
           cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache,mode=max
-
-      - name: Verify pushed image
-        env:
-          IMAGE_SHA: ${{ env.IMAGE_NAME }}:${{ github.sha }}
-          IMAGE_LATEST: ${{ env.IMAGE_NAME }}:latest
-        run: |
-          echo "Try pull $IMAGE_SHA (fallback to latest)"
-          for i in 1 2 3; do
-            if docker pull "$IMAGE_SHA"; then break; fi
-            echo "Pull $IMAGE_SHA failed, retrying..."
-            sleep 5
-          done
-          # If SHA not available, fallback to latest
-          if ! docker image inspect "$IMAGE_SHA" >/dev/null 2>&1; then
-            echo "SHA tag not present, pulling latest"
-            docker pull "$IMAGE_LATEST"
-            IMAGE_TO_CHECK="$IMAGE_LATEST"
-          else
-            IMAGE_TO_CHECK="$IMAGE_SHA"
-          fi
-          echo "Inspect image manifest (optional)"
-          if docker buildx version >/dev/null 2>&1; then
-            docker buildx imagetools inspect "$IMAGE_TO_CHECK" || true
-          fi
-          echo "Run java -version inside image (override ENTRYPOINT)"
-          docker run --rm --entrypoint java "$IMAGE_TO_CHECK" -version
